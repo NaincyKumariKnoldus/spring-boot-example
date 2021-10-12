@@ -1,31 +1,25 @@
 pipeline{
-    triggers{
-        pollSCM('H 0 * * 2')
-     }
-  agent any
-  
-  tools {
-  maven 'maven'
-  jdk 'java'
-}
-    
+    agent{
+        label "master"
+    }
+    tools { 
+        maven 'maven' 
+        jdk 'jdk 11'
+    }
     stages{
-        stage("Clean"){
+        stage("building"){
             steps{
-                sh 'mvn clean'
-            }
-        }
-      stage("Test"){
-          steps{
-                sh 'mvn clean test'
+                sh "mvn clean package"
             }
         }
 
     }
     post{
-        // always{
-        //     //echo "========always========"
-        // }
+        always{
+            mail to: 'gayatri.singh@knoldus.com',
+			subject: "Pipeline: ${currentBuild.fullDisplayName} is ${currentBuild.currentResult}",
+			body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
+        }
         success{
             echo "========pipeline executed successfully ========"
         }
