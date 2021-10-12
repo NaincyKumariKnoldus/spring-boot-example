@@ -1,36 +1,31 @@
-pipeline{
-    triggers{
-        pollSCM('H 0 * * 2')
-     }
-  agent any
-  
-  tools {
-  maven 'maven'
-  jdk 'java'
-}
-    
-    stages{
-        stage("Clean"){
-            steps{
-                sh 'mvn clean'
-            }
+pipeline {
+    agent{
+            label "master"
         }
-      stage("Test"){
-          steps{
-                sh 'mvn clean test'
-            }
+        tools {
+            maven 'maven'
+            // jdk 'jdk8'
         }
+    stages {
 
+        stage('Testing') {
+            steps {
+                echo 'Testing the application...'
+                sh "mvn clean test"
+            }
+        }
     }
-    post{
-        // always{
-        //     //echo "========always========"
-        // }
+    post {
+        always{
+                    mail to: 'shubham.saini@knoldus.com',
+        			subject: "Pipeline: ${currentBuild.fullDisplayName} is ${currentBuild.currentResult}",
+        			body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
+                }
         success{
-            echo "========pipeline executed successfully ========"
+        echo "Testing stage successful"
         }
         failure{
-            echo "========pipeline execution failed========"
+        echo "Testing stage failed"
         }
     }
 }
