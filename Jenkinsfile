@@ -1,10 +1,8 @@
 pipeline {
-    agent{
-            label "master"
-        }
+    agent any
         tools {
             maven 'maven'
-            // jdk 'jdk8'
+            jdk 'jdk 11'
         }
     stages {
 
