@@ -1,5 +1,7 @@
 pipeline{
-    agent any
+    agent{
+        label "master"
+    }
     tools { 
         maven 'maven' 
         jdk 'jdk 11'
@@ -26,4 +28,3 @@ pipeline{
         }
     }
 }
-
